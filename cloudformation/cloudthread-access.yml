@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  CloudthreadAccess:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              AWS:
+                - "arn:aws:iam::CLOUDTHREAD_ACCOUNT:root"
+            Action:
+              - "sts:AssumeRole"
+            Condition:
+              StringEquals:
+                sts:ExternalId: EXTERNAL_ID
+      Path: "/"
+  RolePolicies:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: "cloudthread-cost-explorer-access"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "ce:DescribeCostCategoryDefinition"
+              - "ce:GetRightsizingRecommendation"
+              - "ce:GetCostAndUsage"
+              - "ce:GetSavingsPlansUtilization"
+              - "ce:GetAnomalies"
+              - "ce:GetReservationPurchaseRecommendation"
+              - "ce:GetCostForecast"
+              - "ce:GetPreferences"
+              - "ce:GetReservationUtilization"
+              - "ce:GetCostCategories"
+              - "ce:GetSavingsPlansPurchaseRecommendation"
+              - "ce:GetDimensionValues"
+              - "ce:GetSavingsPlansUtilizationDetails"
+              - "ce:GetAnomalySubscriptions"
+              - "ce:GetCostAndUsageWithResources"
+              - "ce:DescribeReport"
+              - "ce:GetReservationCoverage"
+              - "ce:GetSavingsPlansCoverage"
+              - "ce:GetAnomalyMonitors"
+              - "ce:DescribeNotificationSubscription"
+              - "ce:GetTags"
+              - "ce:GetUsageForecast"
+            Resource: "*"
+      Roles:
+        - Ref: "CloudthreadAccess"
