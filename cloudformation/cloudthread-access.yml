@@ -1,4 +1,12 @@
 AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  CloudthreadAccount:
+    Type: String
+    AllowedPattern: "^[0-9]{12}$"
+  ExternalId:
+    Type: String
+    AllowedPattern: "^.*$"
+    Description: "A set of characters of your choice (any length, alfanumeric characters) - this is for verification purposes, so that we know you are the owner of the role that is getting created by CloudFormation. Make sure this ID is not available to the public."
 Resources:
   CloudthreadAccess:
     Type: "AWS::IAM::Role"
@@ -9,12 +17,12 @@ Resources:
           - Effect: "Allow"
             Principal:
               AWS:
-                - "arn:aws:iam::CLOUDTHREAD_ACCOUNT:root"
+                - !Sub "arn:aws:iam::${CloudthreadAccount}:root"
             Action:
               - "sts:AssumeRole"
             Condition:
               StringEquals:
-                sts:ExternalId: EXTERNAL_ID
+                sts:ExternalId: !Ref ExternalId
       Path: "/"
   RolePolicies:
     Type: "AWS::IAM::Policy"
@@ -50,3 +58,8 @@ Resources:
             Resource: "*"
       Roles:
         - Ref: "CloudthreadAccess"
+Outputs:
+  IamRoleArn:
+    Value: !GetAtt CloudthreadAccess.Arn
+  ExternalId:
+    Value: !Ref ExternalId
